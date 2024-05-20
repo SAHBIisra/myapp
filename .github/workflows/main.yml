@@ -30,10 +30,19 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Log in to Expo
+      - name: Login to Expo
         env:
-          EXPO_CLI_USERNAME: ${{ secrets.EXPO_TOKEN }}
-        run: eas login --token $EXPO_TOKEN
+          EXPO_CLI_USERNAME: ${{ secrets.EXPO_USERNAME }}
+          EXPO_CLI_PASSWORD: ${{ secrets.EXPO_PASSWORD }}
+        run: |
+          expect <<EOF
+          spawn eas login
+          expect "Username:"
+          send "$EXPO_CLI_USERNAME\r"
+          expect "Password:"
+          send "$EXPO_CLI_PASSWORD\r"
+          expect eof
+          EOF
 
       - name: Build Android app with EAS
         run: eas build --platform android --profile production --non-interactive

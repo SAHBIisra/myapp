@@ -30,17 +30,20 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
+      - name: Install expect
+        run: sudo apt-get update && sudo apt-get install -y expect
+
       - name: Login to Expo
         env:
-          EXPO_CLI_USERNAME: ${{ secrets.EXPO_USERNAME }}
-          EXPO_CLI_PASSWORD: ${{ secrets.EXPO_PASSWORD }}
+          EXPO_USERNAME: ${{ secrets.EXPO_CLI_USERNAME }}
+          EXPO_PASSWORD: ${{ secrets.EXPO_CLI_PASSWORD }}
         run: |
           expect <<EOF
           spawn eas login
-          expect "Username:"
-          send "$EXPO_CLI_USERNAME\r"
+          expect "Email address or username:"
+          send "$env(EXPO_CLI_USERNAME)\r"
           expect "Password:"
-          send "$EXPO_CLI_PASSWORD\r"
+          send "$env(EXPO_CLI_PASSWORD)\r"
           expect eof
           EOF
 
@@ -51,4 +54,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app-android-apk
-          path: dist/*.apk
+          path: **/*.apk

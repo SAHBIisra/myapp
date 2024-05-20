@@ -32,8 +32,8 @@ jobs:
 
       - name: Log in to Expo
         env:
-          EXPO_CLI_USERNAME: ${{ secrets.EXPO_CL_TOKEN }}
-        run: eas login --token $EXPO_CL_TOKEN
+          EXPO_CLI_USERNAME: ${{ secrets.EXPO_TOKEN }}
+        run: eas login --token $EXPO_TOKEN
 
       - name: Build Android app with EAS
         run: eas build --platform android --profile production --non-interactive

@@ -1,7 +1,10 @@
-name: Build Android
+name: CI/CD Pipeline
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -16,27 +19,27 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
 
       - name: Install Expo CLI
         run: npm install -g expo-cli
-        
+
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
       - name: Log in to Expo
-        run: echo "$EXPO_CL_TOKEN" | expo login --non-interactive --username ${{ secrets.EXPO_CLI_USERNAME }} --password ${{ secrets.EXPO_CLI_PASSWORD }}
-
-      - name: Build Android
-        run: eas build --platform android --profile production --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_CL_TOKEN }}
+        run: eas login --token $EXPO_CL_TOKEN
+
+      - name: Build Android app with EAS
+        run: eas build --platform android --profile production --non-interactive
 
       - name: Upload APK to GitHub Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: app-android-apk
-          path: artifacts/app.apk
+          path: dist/*.apk
